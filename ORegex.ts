@@ -98,9 +98,12 @@ export class ORegex {
     return this.append(value);
   }
 
+  //TODO decide who sequences should be handled
+  // TODO go over some of the names
   /**
    * Adds to the regex a check for strings containing any number of the given character,
-   * if "character" param contains more then one character this effects only the last character in the param.
+   * if "character" param contains more then one character this effects only the last character in the param
+   * while still adding the rest of the string.
    *
    * The same as adding "character*" to the regex.
    *
@@ -108,5 +111,31 @@ export class ORegex {
    */
   public canHave(character: string) {
     return this.append(`${character}*`);
+  }
+
+  /**
+   * Adds to the regex a check for strings containing one or more of the given character,
+   * if "character" param contains more then one character this effects only the last character in the param
+   * while still adding the rest of the string.
+   *
+   * The same as adding "character*" to the regex.
+   *
+   * @param character The character that can appear one or more times
+   */
+  public hasOneOrMore(character: string) {
+    return this.append(`${character}+`);
+  }
+
+  /**
+   * Adds to the regex a check for strings containing zero or one of the given character,
+   * if "character" param contains more then one character this effects only the last character in the param
+   * while still adding the rest of the string.
+   *
+   * The same as adding "character*" to the regex.
+   *
+   * @param character The character that can appear once or not at all
+   */
+  public canHaveOne(character: string) {
+    return this.append(`${character}?`);
   }
 }

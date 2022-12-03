@@ -53,3 +53,24 @@ Deno.test(function canHave() {
   assertEquals(regex.matchesIn("test bobbbb's code")?.at(0), "bobbbb");
   assertEquals(regex.build(), "bob*");
 });
+
+Deno.test(function hasOneOrMore() {
+  const regex = ORegex.create().hasOneOrMore("bob");
+
+  assertEquals(regex.matchesIn(""), null);
+  assertEquals(regex.matchesIn("bo"), null);
+  assertEquals(regex.matchesIn("bob")?.at(0), "bob");
+  assertEquals(regex.matchesIn("test bobbbb's code")?.at(0), "bobbbb");
+  assertEquals(regex.build(), "bob+");
+});
+
+Deno.test(function canHaveOne() {
+  const regex = ORegex.create().canHaveOne("bob");
+
+  assertEquals(regex.matchesIn(""), null);
+  assertEquals(regex.matchesIn("bo")?.at(0), "bo");
+  assertEquals(regex.matchesIn("bob")?.at(0), "bob");
+  assertEquals(regex.matchesIn("test bobbbb's code")?.at(0), "bob");
+  assertEquals(regex.build(), "bob?");
+  assertEquals(regex.append("s").matchesIn("test bobbs code"), null);
+});
