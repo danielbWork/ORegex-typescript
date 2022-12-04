@@ -4,8 +4,6 @@
  * Most methods return the the ORegex to allow chaining.
  */
 export class ORegex {
-  // TODO Check if we should use commands instead
-  // TODO Add tests
   // TODO Add all symbols in documentation to inform users about how to block them and maybe method
 
   private regex: string;
@@ -31,26 +29,43 @@ export class ORegex {
   }
 
   /**
-   * Searches the given value matches of the regex
-   *
-   * Same as calling value.match(oregex.build());
-   *
-   * @param value The string we match the regex with
-   * @returns The results of the search in the array or null if nothing was found
-   */
-  public matchesIn(value: string) {
-    return value.match(this.regex);
-  }
-
-  // TODO add general contains and count method and array matches
-
-  /**
    * Appends the given string to the regex
    * @param value The value we append to the regex
    */
   public append(value: string): ORegex {
     this.regex += value;
     return this;
+  }
+
+  /**
+   * Checks the given value to see if it contains a match for the regex
+   * @param value The value we check if it contains the regex
+   * @returns true if regex is contained in the value false otherwise
+   */
+  public isIn(value: string) {
+    return new RegExp(this.regex).test(value);
+  }
+
+  // TODO decide what to do with this mess
+  /**
+   * Searches the given value for matches of the regex
+   *
+   * Same as calling value.match(new RegExp(oregex.build(), "g"));
+   *
+   * @param value The string we match the regex with
+   * @returns The results of the search in a array or null if nothing was found
+   */
+  public allMatchesIn(value: string) {
+    return value.match(new RegExp(this.regex, "g"));
+  }
+
+  /**
+   * Returns how many matches of the regex are in the given value
+   * @param value The value we check how many times the regex is in it
+   * @returns The number of matches in the value
+   */
+  public countOfMatchesIn(value: string) {
+    return this.allMatchesIn(value)?.length || 0;
   }
 
   /**
@@ -87,7 +102,7 @@ export class ORegex {
   }
 
   /**
-   * Adds to the regex a check for strings containing the given string this is the same
+   * Adds to the regex a check for strings containing the given value this is the same
    * as calling the {@link append} method.
    *
    * The same as adding "value" to the regex.
@@ -98,44 +113,42 @@ export class ORegex {
     return this.append(value);
   }
 
-  //TODO decide who sequences should be handled
-  // TODO go over some of the names
   /**
-   * Adds to the regex a check for strings containing any number of the given character,
-   * if "character" param contains more then one character this effects only the last character in the param
-   * while still adding the rest of the string.
+   * Adds to the regex a check for strings containing any number of the given sequence.
    *
-   * The same as adding "character*" to the regex.
+   * i.e. canHave("ab") => can match for "" "ab" and "ababab"
    *
-   * @param character The character that can appear any number of time
+   * The same as adding "(sequence)*" to the regex.
+   *
+   * @param sequence The sequence that can appear any number of time
    */
-  public canHave(character: string) {
-    return this.append(`${character}*`);
+  public canHave(sequence: string) {
+    return this.append(`(${sequence})*`);
   }
 
   /**
-   * Adds to the regex a check for strings containing one or more of the given character,
-   * if "character" param contains more then one character this effects only the last character in the param
-   * while still adding the rest of the string.
+   * Adds to the regex a check for strings containing one or more of the given sequence.
    *
-   * The same as adding "character*" to the regex.
+   * i.e. hasOneOrMore("ab") => can match for "ab" and "ababab"
    *
-   * @param character The character that can appear one or more times
+   * The same as adding "(sequence)+" to the regex.
+   *
+   * @param sequence The sequence that can appear one or more times
    */
-  public hasOneOrMore(character: string) {
-    return this.append(`${character}+`);
+  public hasOneOrMore(sequence: string) {
+    return this.append(`(${sequence})+`);
   }
 
   /**
-   * Adds to the regex a check for strings containing zero or one of the given character,
-   * if "character" param contains more then one character this effects only the last character in the param
-   * while still adding the rest of the string.
+   * Adds to the regex a check for strings containing zero or one of the given sequence.
    *
-   * The same as adding "character*" to the regex.
+   * i.e. canHaveOne("ab") => can match for "" and "ab"
    *
-   * @param character The character that can appear once or not at all
+   * The same as adding "(sequence)?" to the regex.
+   *
+   * @param sequence The sequence that can appear once or not at all
    */
-  public canHaveOne(character: string) {
-    return this.append(`${character}?`);
+  public canHaveOne(sequence: string) {
+    return this.append(`(${sequence})?`);
   }
 }
