@@ -5,7 +5,6 @@
  */
 export class ORegex {
   // TODO Add all symbols in documentation to inform users about how to block them and maybe method
-  // TODO maybe add default value of empty string "" for better chaining
   private regex: string;
 
   private constructor(regex?: string) {
@@ -69,13 +68,27 @@ export class ORegex {
   }
 
   /**
+   * Adds to the regex a check for strings containing the given value this is the same
+   * as calling the {@link append} method.
+   *
+   * The same as adding "value" to the regex.
+   *
+   * @param value The string that should be part of the checked strings
+   */
+  public containsInIt(value: string) {
+    return this.append(value);
+  }
+
+  //#region Start/End
+
+  /**
    * Adds to the regex a check for strings starting with the given string (Recommended to be called only once).
    *
    * The same as adding "^start" to the regex.
    *
-   * @param start The string that should be at the start of checked strings
+   * @param start The string that should be at the start of checked strings defaults as ""
    */
-  public startsWith(start: string) {
+  public startsWith(start = "") {
     return this.append(`^${start}`);
   }
 
@@ -84,9 +97,9 @@ export class ORegex {
    *
    * The same as adding "end$" to the regex.
    *
-   * @param end The string that should be at the end of checked strings
+   * @param end The string that should be at the end of checked strings defaults as ""
    */
-  public endsWith(end: string) {
+  public endsWith(end = "") {
     return this.append(`${end}$`);
   }
 
@@ -101,17 +114,9 @@ export class ORegex {
     return this.append(`^${value}$`);
   }
 
-  /**
-   * Adds to the regex a check for strings containing the given value this is the same
-   * as calling the {@link append} method.
-   *
-   * The same as adding "value" to the regex.
-   *
-   * @param value The string that should be part of the checked strings
-   */
-  public containsInIt(value: string) {
-    return this.append(value);
-  }
+  //#endregion
+
+  //#region Sequence
 
   /**
    * Adds to the regex a check for strings containing any number of the given sequence.
@@ -120,10 +125,13 @@ export class ORegex {
    *
    * The same as adding "(sequence)*" to the regex.
    *
+   * If nothing is passed then this effects the last character (or sequence if it's inside round brackets ())
+   * that was added to the regex.
+   *
    * @param sequence The sequence that can appear any number of time
    */
-  public canHave(sequence: string) {
-    return this.append(`(${sequence})*`);
+  public canHave(sequence?: string) {
+    return this.append(sequence ? `(${sequence})*` : "*");
   }
 
   /**
@@ -133,10 +141,13 @@ export class ORegex {
    *
    * The same as adding "(sequence)+" to the regex.
    *
+   * If nothing is passed then this effects the last character (or sequence if it's inside round brackets ())
+   * that was added to the regex.
+   *
    * @param sequence The sequence that can appear one or more times
    */
-  public hasOneOrMore(sequence: string) {
-    return this.append(`(${sequence})+`);
+  public hasOneOrMore(sequence?: string) {
+    return this.append(sequence ? `(${sequence})+` : "+");
   }
 
   /**
@@ -146,10 +157,13 @@ export class ORegex {
    *
    * The same as adding "(sequence)?" to the regex.
    *
+   * If nothing is passed then this effects the last character (or sequence if it's inside round brackets ())
+   * that was added to the regex.
+   *
    * @param sequence The sequence that can appear once or not at all
    */
-  public canHaveOne(sequence: string) {
-    return this.append(`(${sequence})?`);
+  public canHaveOne(sequence?: string) {
+    return this.append(sequence ? `(${sequence})?` : "?");
   }
 
   /**
@@ -159,25 +173,35 @@ export class ORegex {
    *
    * The same as adding "(sequence){amount}" to the regex.
    *
-   * @param sequence The sequence that can appear the amount of times given
+   * If no sequence is passed then this effects the last character (or sequence if it's inside round brackets ())
+   * that was added to the regex.
+   *
    * @param amount How many of the sequence should appear in the string
+   * @param sequence The sequence that can appear the amount of times given
    */
-  public hasAmount(sequence: string, amount: number) {
-    return this.append(`(${sequence}){${amount}}`);
+  public hasAmount(amount: number, sequence?: string): ORegex {
+    const sequencePrefix = sequence ? `(${sequence})` : "";
+
+    return this.append(`${sequencePrefix}{${amount}}`);
   }
 
   /**
    * Adds to the regex a check for strings containing the given sequence an amount inside the given range.
    *
    * i.e. hasAmountInRange("ab", 2, 4) => can match for "abab", "ababab" and "abababab"
-   *hasAmountInRange("ab", 2, ) => can match for "abab", "ababab", "abababab" ...
+   * hasAmountInRange("ab", 2, ) => can match for "abab", "ababab", "abababab" ...
    * The same as adding "(sequence){min,max}" to the regex.
+   *
+   * If no sequence is passed then this effects the last character (or sequence if it's inside round brackets ())
+   * that was added to the regex.
    *
    * @param sequence The sequence that can appear min-max times
    * @param min Inclusive number of times the sequence needs to appear
    * @param max Inclusive number of times the can appear if not passed the sequence can appear any amount of times
    */
-  public hasAmountInRange(sequence: string, min: number, max?: number) {
-    return this.append(`(${sequence}){${min},${max ?? ""}}`);
+  public hasAmountInRange(min: number, max?: number, sequence?: string) {
+    const sequencePrefix = sequence ? `(${sequence})` : "";
+
+    return this.append(`${sequencePrefix}{${min},${max ?? ""}}`);
   }
 }
