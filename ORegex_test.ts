@@ -101,3 +101,33 @@ Deno.test(function canHaveOne() {
 
   assertFalse(regex.append("s").isIn("test bobbs code"));
 });
+
+Deno.test(function hasAmount() {
+  const regex = ORegex.create("bo").hasAmount("b", 2);
+
+  assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("bo"));
+  assertFalse(regex.isIn("bob"));
+  assert(regex.isIn("test bobb code"));
+  assertEquals(regex.build(), "bo(b){2}");
+
+  assert(regex.append("s").isIn("test bobbs code"));
+});
+
+Deno.test(function hasAmountInRange() {
+  const regex = ORegex.create("bo").hasAmountInRange("b", 2, 3);
+
+  assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("bo"));
+  assertFalse(regex.isIn("bob"));
+  assert(regex.isIn("test bobb code"));
+  assert(regex.isIn("test bobbb code"));
+
+  assertEquals(regex.build(), "bo(b){2,3}");
+
+  const regexNoMax = ORegex.create("bo").hasAmountInRange("b", 2).append("s");
+
+  assertFalse(regexNoMax.isIn("bobs"));
+  assert(regexNoMax.isIn("test bobbs code"));
+  assert(regexNoMax.isIn("bobbbbbbbbbbs"));
+});

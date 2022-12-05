@@ -5,7 +5,7 @@
  */
 export class ORegex {
   // TODO Add all symbols in documentation to inform users about how to block them and maybe method
-
+  // TODO maybe add default value of empty string "" for better chaining
   private regex: string;
 
   private constructor(regex?: string) {
@@ -46,7 +46,7 @@ export class ORegex {
     return new RegExp(this.regex).test(value);
   }
 
-  // TODO decide what to do with this mess
+  // TODO decide what to do with this mess maybe have multiple methods for each flag
   /**
    * Searches the given value for matches of the regex
    *
@@ -150,5 +150,34 @@ export class ORegex {
    */
   public canHaveOne(sequence: string) {
     return this.append(`(${sequence})?`);
+  }
+
+  /**
+   * Adds to the regex a check for strings containing the exact amount of the given sequence.
+   *
+   * i.e. hasAmount("ab", 2) => can match for "abab"
+   *
+   * The same as adding "(sequence){amount}" to the regex.
+   *
+   * @param sequence The sequence that can appear the amount of times given
+   * @param amount How many of the sequence should appear in the string
+   */
+  public hasAmount(sequence: string, amount: number) {
+    return this.append(`(${sequence}){${amount}}`);
+  }
+
+  /**
+   * Adds to the regex a check for strings containing the given sequence an amount inside the given range.
+   *
+   * i.e. hasAmountInRange("ab", 2, 4) => can match for "abab", "ababab" and "abababab"
+   *hasAmountInRange("ab", 2, ) => can match for "abab", "ababab", "abababab" ...
+   * The same as adding "(sequence){min,max}" to the regex.
+   *
+   * @param sequence The sequence that can appear min-max times
+   * @param min Inclusive number of times the sequence needs to appear
+   * @param max Inclusive number of times the can appear if not passed the sequence can appear any amount of times
+   */
+  public hasAmountInRange(sequence: string, min: number, max?: number) {
+    return this.append(`(${sequence}){${min},${max ?? ""}}`);
   }
 }
