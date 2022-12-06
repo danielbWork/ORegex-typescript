@@ -180,7 +180,7 @@ export class ORegex {
    * @param amount How many of the sequence should appear in the string
    * @param sequence The sequence that can appear the amount of times given
    */
-  public hasAmount(amount: number, sequence?: string): ORegex {
+  public ofAmount(amount: number, sequence?: string): ORegex {
     const sequencePrefix = sequence ? `(${sequence})` : "";
 
     return this.append(`${sequencePrefix}{${amount}}`);
@@ -200,7 +200,7 @@ export class ORegex {
    * @param min Inclusive number of times the sequence needs to appear
    * @param max Inclusive number of times the can appear if not passed the sequence can appear any amount of times
    */
-  public hasAmountInRange(min: number, max?: number, sequence?: string) {
+  public ofAmountInRange(min: number, max?: number, sequence?: string) {
     const sequencePrefix = sequence ? `(${sequence})` : "";
 
     return this.append(`${sequencePrefix}{${min},${max ?? ""}}`);
@@ -273,6 +273,55 @@ export class ORegex {
   }
 
   // TODO decide on code for [] brackets as they are wired with ranges
+
+  //#endregion
+
+  //#region Character classes
+
+  /**
+   * Adds a check for any digit (0-9) to appear as the next character
+   *
+   * i.e. digit() => can match for "0" "9" and everything between
+   *
+   * Same as adding \d to the regex
+   *
+   */
+  public digit() {
+    return this.append("\\d");
+  }
+
+  /**
+   * Adds a check for any "word character" to appear as the next character, this means
+   * any character in the english alphabet (a-z or A-Z) , any digit (0-9) as well as _
+   *
+   * i.e. wordCharacter() => can match for "a", "B", "y" "Z","0", "9",  "_" and every other letter and digit as well
+   *
+   * Same as adding \w to the regex.
+   *
+   */
+  public wordCharacter() {
+    return this.append("\\w");
+  }
+
+  /**
+   * Adds a check for any space character (i.e. space, tab, new line...) to appear as the next character
+   *
+   * Same as adding \s to the regex
+   *
+   */
+  public space() {
+    return this.append("\\s");
+  }
+
+  /**
+   * Adds a check for any character to appear, meaning it shouldn't match ""
+   *
+   * Same as adding . to the regex
+   *
+   */
+  public any() {
+    return this.append(".");
+  }
 
   //#endregion
 }

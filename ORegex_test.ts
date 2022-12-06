@@ -112,8 +112,8 @@ Deno.test(function canHaveOne() {
   assertEquals(ORegex.create().canHaveOne().build(), "?");
 });
 
-Deno.test(function hasAmount() {
-  const regex = ORegex.create("bo").hasAmount(2, "b");
+Deno.test(function ofAmount() {
+  const regex = ORegex.create("bo").ofAmount(2, "b");
 
   assertFalse(regex.isIn(""));
   assertFalse(regex.isIn("bo"));
@@ -123,11 +123,11 @@ Deno.test(function hasAmount() {
 
   assert(regex.append("s").isIn("test bobbs code"));
 
-  assertEquals(ORegex.create().hasAmount(3).build(), "{3}");
+  assertEquals(ORegex.create().ofAmount(3).build(), "{3}");
 });
 
-Deno.test(function hasAmountInRange() {
-  const regex = ORegex.create("bo").hasAmountInRange(2, 3, "b");
+Deno.test(function ofAmountInRange() {
+  const regex = ORegex.create("bo").ofAmountInRange(2, 3, "b");
 
   assertFalse(regex.isIn(""));
   assertFalse(regex.isIn("bo"));
@@ -138,15 +138,15 @@ Deno.test(function hasAmountInRange() {
   assertEquals(regex.build(), "bo(b){2,3}");
 
   const regexNoMax = ORegex.create("bo")
-    .hasAmountInRange(2, undefined, "b")
+    .ofAmountInRange(2, undefined, "b")
     .append("s");
 
   assertFalse(regexNoMax.isIn("bobs"));
   assert(regexNoMax.isIn("test bobbs code"));
   assert(regexNoMax.isIn("bobbbbbbbbbbs"));
 
-  assertEquals(ORegex.create().hasAmountInRange(3).build(), "{3,}");
-  assertEquals(ORegex.create().hasAmountInRange(3, 8).build(), "{3,8}");
+  assertEquals(ORegex.create().ofAmountInRange(3).build(), "{3,}");
+  assertEquals(ORegex.create().ofAmountInRange(3, 8).build(), "{3,8}");
 });
 
 Deno.test(function enteringOptions() {
@@ -174,7 +174,7 @@ Deno.test(function enteringOptions() {
 Deno.test(function containsOneOf() {
   const regex = ORegex.create().containsOneOf(["bo", "bob", "c"]);
 
-  // assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn(""));
   assert(regex.isIn("bo"));
   assert(regex.isIn("bob"));
   assert(regex.isIn("c"));
@@ -183,4 +183,50 @@ Deno.test(function containsOneOf() {
   regex.canHaveAnyAmount();
 
   assert(regex.isIn("cbocbob"));
+});
+
+Deno.test(function digit() {
+  const regex = ORegex.create().digit();
+
+  assert(regex.isIn("5"));
+  assert(regex.isIn("9"));
+  assert(regex.isIn("asfasf000"));
+  assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("bob"));
+  assertEquals(regex.build(), "\\d");
+});
+
+Deno.test(function wordCharacter() {
+  const regex = ORegex.create().wordCharacter();
+
+  assert(regex.isIn("5"));
+  assert(regex.isIn("A"));
+  assert(regex.isIn("z"));
+  assert(regex.isIn("_"));
+  assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("-+$%^&"));
+  assertEquals(regex.build(), "\\w");
+});
+
+Deno.test(function space() {
+  const regex = ORegex.create().space();
+
+  assert(regex.isIn(" "));
+  assert(regex.isIn("\t"));
+  assert(regex.isIn("\n"));
+  assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("safdafgda-hmkfgl"));
+  assertEquals(regex.build(), "\\s");
+});
+
+Deno.test(function any() {
+  const regex = ORegex.create().any();
+
+  assert(regex.isIn(" "));
+  assert(regex.isIn("0"));
+  assert(regex.isIn("_"));
+  assert(regex.isIn("t"));
+  assert(regex.isIn("B"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), ".");
 });
