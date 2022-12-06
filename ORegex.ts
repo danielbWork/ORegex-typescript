@@ -33,6 +33,7 @@ export class ORegex {
    */
   public append(value: string): ORegex {
     this.regex += value;
+
     return this;
   }
 
@@ -130,7 +131,7 @@ export class ORegex {
    *
    * @param sequence The sequence that can appear any number of time
    */
-  public canHave(sequence?: string) {
+  public canHaveAnyAmount(sequence?: string) {
     return this.append(sequence ? `(${sequence})*` : "*");
   }
 
@@ -204,4 +205,74 @@ export class ORegex {
 
     return this.append(`${sequencePrefix}{${min},${max ?? ""}}`);
   }
+
+  //#endregion
+
+  //#region Optional
+
+  /**
+   * After this is called all changes in the regex should be considered part of a selection of options.
+   * Important: Between each option you should call {@link or} otherwise they would be considered the same option.
+   * To exit the selection of options call {@link stopEnteringOptions}.
+   *
+   * If you have a collection of options already made you should use {@link containsOneOf} instead.
+   *
+   * This is the same as adding a (startValue to the regex.
+   *
+   * @param startValue If passed treated as the first option in the selection, however {@link or} still needs to be called to move to add the next option
+   */
+  public startEnteringOptions(startValue = "") {
+    return this.append(`(${startValue}`);
+  }
+
+  /**
+   * This should be called after {@link startEnteringOptions} to signify a new optional value in a selection
+   *
+   * This is the same as adding a |option to the regex
+   *
+   * @param option If passed added as a new option to the selection, however this method needs to be called again to add the next option
+   */
+  public or(option = "") {
+    return this.append(`|${option}`);
+  }
+
+  /**
+   * Should be called after {@link startEnteringOptions}, to stop adding to the option selection.
+   * This method should be called the same amount of times as {@link startEnteringOptions}.
+   *
+   * This is the same as adding a ) to the regex.
+   *
+   */
+  public stopEnteringOptions() {
+    return this.append(")");
+  }
+
+  /**
+   * Adds to the regex a check for strings containing one of the given values
+   * i.e. containsOneOf(["ab", "c"]) => can match for "ab" and "c"
+   *
+   * The same as adding "(value[0]|value[1]...)" to the regex.
+   *
+   * If you want more complex options that use certain conditions such as {@link startsWith},
+   * you should use {@link startEnteringOptions}
+   *
+   * @param values The optional values added to the regex
+   */
+  public containsOneOf(values: string[]) {
+    this.append("(");
+
+    values.forEach((value, index) => {
+      if (index !== 0) {
+        this.append("|");
+      }
+
+      this.append(value);
+    });
+
+    return this.append(")");
+  }
+
+  // TODO decide on code for [] brackets as they are wired with ranges
+
+  //#endregion
 }

@@ -73,8 +73,8 @@ Deno.test(function containsInIt() {
   assertEquals(regex.build(), "bob");
 });
 
-Deno.test(function canHave() {
-  const regex = ORegex.create("bo").canHave("b");
+Deno.test(function canHaveAnyAmount() {
+  const regex = ORegex.create("bo").canHaveAnyAmount("b");
 
   assertFalse(regex.isIn(""));
   assert(regex.isIn("bo"));
@@ -83,7 +83,7 @@ Deno.test(function canHave() {
   assertEquals(regex.allMatchesIn("test bobbbb's code")?.at(0), "bobbbb");
   assertEquals(regex.build(), "bo(b)*");
 
-  assertEquals(ORegex.create().canHave().build(), "*");
+  assertEquals(ORegex.create().canHaveAnyAmount().build(), "*");
 });
 
 Deno.test(function hasOneOrMore() {
@@ -147,4 +147,40 @@ Deno.test(function hasAmountInRange() {
 
   assertEquals(ORegex.create().hasAmountInRange(3).build(), "{3,}");
   assertEquals(ORegex.create().hasAmountInRange(3, 8).build(), "{3,8}");
+});
+
+Deno.test(function enteringOptions() {
+  const regex = ORegex.create()
+    .startEnteringOptions("bob")
+    .or("jim")
+    .or()
+    .startsWith("test")
+    .or("hi")
+    .endsWith()
+    .stopEnteringOptions();
+
+  // assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("bo"));
+  assert(regex.isIn("bob"));
+  assert(regex.isIn("AAAjimlll"));
+  assert(regex.isIn("testfhd"));
+  assert(regex.isIn("hi"));
+  assert(regex.isIn("testbobjimhi"));
+  assertFalse(regex.isIn("hi bo"));
+
+  assertEquals(regex.build(), "(bob|jim|^test|hi$)");
+});
+
+Deno.test(function containsOneOf() {
+  const regex = ORegex.create().containsOneOf(["bo", "bob", "c"]);
+
+  // assertFalse(regex.isIn(""));
+  assert(regex.isIn("bo"));
+  assert(regex.isIn("bob"));
+  assert(regex.isIn("c"));
+  assertEquals(regex.build(), "(bo|bob|c)");
+
+  regex.canHaveAnyAmount();
+
+  assert(regex.isIn("cbocbob"));
 });
