@@ -291,6 +291,18 @@ export class ORegex {
   }
 
   /**
+   * Adds a check for any non digit (0-9) to appear as the next character
+   *
+   * i.e. digit() => won't match for "0" "9" and everything between
+   *
+   * Same as adding \D to the regex
+   *
+   */
+  public nonDigit() {
+    return this.append("\\D");
+  }
+
+  /**
    * Adds a check for any "word character" to appear as the next character, this means
    * any character in the english alphabet (a-z or A-Z) , any digit (0-9) as well as _
    *
@@ -304,6 +316,18 @@ export class ORegex {
   }
 
   /**
+   * Adds a check for any non "word character" to appear as the next character, this means
+   * any character in the english alphabet (a-z or A-Z) , any digit (0-9) as well as _
+   *
+   * i.e. wordCharacter() => won't match for "a", "B", "y" "Z","0", "9",  "_" and every other letter and digit as well
+   *
+   * Same as adding \W to the regex.
+   *
+   */
+  public nonWordCharacter() {
+    return this.append("\\W");
+  }
+  /**
    * Adds a check for any space character (i.e. space, tab, new line...) to appear as the next character
    *
    * Same as adding \s to the regex
@@ -311,6 +335,16 @@ export class ORegex {
    */
   public space() {
     return this.append("\\s");
+  }
+
+  /**
+   * Adds a check for any non space character (i.e. space, tab, new line...) to appear as the next character
+   *
+   * Same as adding \S to the regex
+   *
+   */
+  public nonSpace() {
+    return this.append("\\S");
   }
 
   /**

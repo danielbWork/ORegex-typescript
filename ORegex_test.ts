@@ -196,6 +196,17 @@ Deno.test(function digit() {
   assertEquals(regex.build(), "\\d");
 });
 
+Deno.test(function nonDigit() {
+  const regex = ORegex.create().nonDigit();
+
+  assertFalse(regex.isIn("5"));
+  assertFalse(regex.isIn("9"));
+  assert(regex.isIn("asfasf000"));
+  assertFalse(regex.isIn(""));
+  assert(regex.isIn("bob"));
+  assertEquals(regex.build(), "\\D");
+});
+
 Deno.test(function wordCharacter() {
   const regex = ORegex.create().wordCharacter();
 
@@ -208,6 +219,18 @@ Deno.test(function wordCharacter() {
   assertEquals(regex.build(), "\\w");
 });
 
+Deno.test(function nonWordCharacter() {
+  const regex = ORegex.create().nonWordCharacter();
+
+  assertFalse(regex.isIn("5"));
+  assertFalse(regex.isIn("A"));
+  assertFalse(regex.isIn("z"));
+  assertFalse(regex.isIn("_"));
+  assertFalse(regex.isIn(""));
+  assert(regex.isIn("-+$%^&"));
+  assertEquals(regex.build(), "\\W");
+});
+
 Deno.test(function space() {
   const regex = ORegex.create().space();
 
@@ -217,6 +240,17 @@ Deno.test(function space() {
   assertFalse(regex.isIn(""));
   assertFalse(regex.isIn("safdafgda-hmkfgl"));
   assertEquals(regex.build(), "\\s");
+});
+
+Deno.test(function nonSpace() {
+  const regex = ORegex.create().nonSpace();
+
+  assertFalse(regex.isIn(" "));
+  assertFalse(regex.isIn("\t"));
+  assertFalse(regex.isIn("\n"));
+  assertFalse(regex.isIn(""));
+  assert(regex.isIn("safdafgda-hmkfgl"));
+  assertEquals(regex.build(), "\\S");
 });
 
 Deno.test(function any() {
