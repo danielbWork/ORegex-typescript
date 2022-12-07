@@ -311,7 +311,45 @@ export class ORegex {
 
   //#endregion
 
-  //#region Character classes
+  //#region Characters
+
+  /**
+   * Adds a selection of characters that can appear in the pattern to the regex.
+   *
+   * i.e if characters === abc then the next character should be "a", "b" or "c".
+   *
+   * Ranges can also be used for example a-c means the same as abc, 0-9 means every digit,
+   * A-Z means every capital letter.
+   *
+   * You can can even pass A-Gbnt0-5 which means every capital between A to G inclusive, the lower case letters
+   * b, n and t and every digit between 0 and 5 inclusive
+   *
+   * Same as adding [characters] to the regex.
+   *
+   * @param characters The characters expected to be in the pattern
+   */
+  public containsOneCharacterOf(characters: string) {
+    return this.append(`[${characters}]`);
+  }
+
+  /**
+   * Adds a selection of characters that can't appear in the pattern to the regex.
+   *
+   * i.e if characters === abc then the next character shouldn't be "a", "b" or "c".
+   *
+   * Ranges can also be used for example a-c means the same as abc, 0-9 means every digit,
+   * A-Z means every capital letter.
+   *
+   * You can can even pass A-Gbnt0-5 which means every capital between A to G inclusive, the lower case letters
+   * b, n and t and every digit between 0 and 5 inclusive.
+   *
+   * Same as adding [^characters] to the regex.
+   *
+   * @param characters The characters expected to be in the pattern
+   */
+  public containsAnyExceptCharacterOf(characters: string) {
+    return this.append(`[^${characters}]`);
+  }
 
   /**
    * Adds a check for any digit (0-9) to appear as the next character

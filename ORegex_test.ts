@@ -214,6 +214,28 @@ Deno.test(function containsOneOf() {
   assert(regex.isIn("cbocbob"));
 });
 
+Deno.test(function containsOneCharacterOf() {
+  const regex = ORegex.create().containsOneCharacterOf("a5Ty");
+
+  assert(regex.isIn("5"));
+  assert(regex.isIn("T"));
+  assert(regex.isIn("asfasf000"));
+  assertFalse(regex.isIn(""));
+  assertFalse(regex.isIn("bob"));
+  assertEquals(regex.build(), "[a5Ty]");
+});
+
+Deno.test(function containsAnyExceptCharacterOf() {
+  const regex = ORegex.create().containsAnyExceptCharacterOf("a5Ty");
+
+  assertFalse(regex.isIn("5"));
+  assertFalse(regex.isIn("T"));
+  assert(regex.isIn("asfasf000"));
+  assertFalse(regex.isIn(""));
+  assert(regex.isIn("bob"));
+  assertEquals(regex.build(), "[^a5Ty]");
+});
+
 Deno.test(function digit() {
   const regex = ORegex.create().digit();
 
