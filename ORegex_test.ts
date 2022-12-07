@@ -18,10 +18,32 @@ Deno.test(function doesExistIn() {
   assert(regex.isIn("flambob"));
 });
 
-Deno.test(function allMatchesIn() {
+Deno.test(function getMatchesIn() {
   const regex = ORegex.create().append("bob");
-  assertEquals(regex.allMatchesIn("flam"), null);
-  assertEquals(regex.allMatchesIn("flambob")?.at(0), "bob");
+  assertEquals(regex.getMatchesIn("flam"), null);
+  assertEquals(regex.getMatchesIn("flambob")?.at(0), "bob");
+
+  assertEquals(regex.getMatchesIn("bobflambob")?.length, 2);
+  assertEquals(regex.getMatchesIn("bobflambob", false)?.length, 1);
+
+  assertEquals(
+    regex.getMatchesIn("bOBflamBoBBob", true, true, false)?.length,
+    3
+  );
+
+  const regexLines = ORegex.create()
+    .startEnteringOptions()
+    .startsWith("bob")
+    .or()
+    .endsWith("jim")
+    .stopEnteringOptions();
+  regexLines;
+
+  assertEquals(regexLines.getMatchesIn("bob\njim\njimbob\nrobjim")?.length, 3);
+  assertEquals(
+    regexLines.getMatchesIn("jim\nrobjim\njimbob\nbob", true, false),
+    null
+  );
 });
 
 Deno.test(function countOfMatchesIn() {
@@ -31,6 +53,13 @@ Deno.test(function countOfMatchesIn() {
   assertEquals(regex.countOfMatchesIn("bob bob"), 2);
   assertEquals(regex.countOfMatchesIn("flam-bobob"), 1);
   assertEquals(regex.countOfMatchesIn("bob-bobob"), 2);
+  assertEquals(regex.countOfMatchesIn("BOB-boBob"), 0);
+  assertEquals(regex.countOfMatchesIn("BOB-boBob", true, false), 2);
+
+  const regexLines = ORegex.create().startsWith("bob");
+
+  assertEquals(regexLines.countOfMatchesIn("bob\nbob"), 2);
+  assertEquals(regexLines.countOfMatchesIn("bob\nbob", false), 1);
 });
 
 Deno.test(function startsWith() {
@@ -80,7 +109,7 @@ Deno.test(function canHaveAnyAmount() {
   assert(regex.isIn("bo"));
   assert(regex.isIn("bob"));
   assert(regex.isIn("My bob's friend"));
-  assertEquals(regex.allMatchesIn("test bobbbb's code")?.at(0), "bobbbb");
+  assertEquals(regex.getMatchesIn("test bobbbb's code")?.at(0), "bobbbb");
   assertEquals(regex.build(), "bo(b)*");
 
   assertEquals(ORegex.create().canHaveAnyAmount().build(), "*");
@@ -92,7 +121,7 @@ Deno.test(function hasOneOrMore() {
   assertFalse(regex.isIn(""));
   assertFalse(regex.isIn("bo"));
   assert(regex.isIn("bob"));
-  assertEquals(regex.allMatchesIn("test bobbbb's code")?.at(0), "bobbbb");
+  assertEquals(regex.getMatchesIn("test bobbbb's code")?.at(0), "bobbbb");
   assertEquals(regex.build(), "bo(b)+");
 
   assertEquals(ORegex.create().hasOneOrMore().build(), "+");
@@ -104,7 +133,7 @@ Deno.test(function canHaveOne() {
   assertFalse(regex.isIn(""));
   assert(regex.isIn("bo"));
   assert(regex.isIn("bob"));
-  assertEquals(regex.allMatchesIn("test bobbbb's code")?.at(0), "bob");
+  assertEquals(regex.getMatchesIn("test bobbbb's code")?.at(0), "bob");
   assertEquals(regex.build(), "bo(b)?");
 
   assertFalse(regex.append("s").isIn("test bobbs code"));

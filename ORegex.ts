@@ -4,7 +4,6 @@
  * Most methods return the the ORegex to allow chaining.
  */
 export class ORegex {
-  // TODO Add all symbols in documentation to inform users about how to block them and maybe method
   private regex: string;
 
   private constructor(regex?: string) {
@@ -17,6 +16,17 @@ export class ORegex {
    */
   public static create(startingValue?: string) {
     return new ORegex(startingValue);
+  }
+
+  /**
+   * Goes over the string and
+   * @param value The string that might contain special characters
+   *
+   * @returns A version of the string where all special characters have been updated to be treated as normal
+   */
+  public static parseToNonRegexString(value: string) {
+    // const regex = ORegex.create()
+    // TODO Add all symbols in documentation to inform users about how to block them and maybe method
   }
 
   /**
@@ -46,26 +56,51 @@ export class ORegex {
     return new RegExp(this.regex).test(value);
   }
 
-  // TODO decide what to do with this mess maybe have multiple methods for each flag
   /**
    * Searches the given value for matches of the regex
    *
-   * Same as calling value.match(new RegExp(oregex.build(), "g"));
+   * Same as calling value.match(new RegExp(oregex.build())) with the appropriate flags
    *
    * @param value The string we match the regex with
+   * @param isAllMatches If true (which is the default value) gets every appearance of the regex from the value
+   * this will not find "intersecting/nested values" as after finding a regex it continues the search after it
+   * @param isMultiLine Only effects directly the {@link startsWith}, {@link endsWith} and {@link equalsTo} commands making them effect
+   * every line of the string and not just the start and end of a string. Defaults to true.
+   * @param isCaseSensitive Defaults to true, if changed to false regex will ignore the cases for letter meaning a == A
    * @returns The results of the search in a array or null if nothing was found
    */
-  public allMatchesIn(value: string) {
-    return value.match(new RegExp(this.regex, "g"));
+  public getMatchesIn(
+    value: string,
+    isAllMatches = true,
+    isMultiLine = true,
+    isCaseSensitive = true
+  ) {
+    let flags = "";
+
+    if (isAllMatches) flags += "g";
+    if (isMultiLine) flags += "m";
+    if (!isCaseSensitive) flags += "i";
+
+    return value.match(new RegExp(this.regex, flags));
   }
 
   /**
    * Returns how many matches of the regex are in the given value
    * @param value The value we check how many times the regex is in it
+   * @param isMultiLine Only effects directly the {@link startsWith}, {@link endsWith} and {@link equalsTo} commands making them effect
+   * every line of the string and not just the start and end of a string. Defaults to true.
+   * @param isCaseSensitive Defaults to true, if changed to false regex will ignore the cases for letter meaning a == A
+   *
    * @returns The number of matches in the value
    */
-  public countOfMatchesIn(value: string) {
-    return this.allMatchesIn(value)?.length || 0;
+  public countOfMatchesIn(
+    value: string,
+    isMultiLine?: boolean,
+    isCaseSensitive?: boolean
+  ) {
+    return (
+      this.getMatchesIn(value, true, isMultiLine, isCaseSensitive)?.length || 0
+    );
   }
 
   /**
@@ -327,6 +362,7 @@ export class ORegex {
   public nonWordCharacter() {
     return this.append("\\W");
   }
+
   /**
    * Adds a check for any space character (i.e. space, tab, new line...) to appear as the next character
    *
