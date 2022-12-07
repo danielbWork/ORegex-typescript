@@ -25,7 +25,7 @@ export class ORegex {
    * @returns A version of the string where all special characters have been updated to be treated as normal
    */
   public static parseToNonRegexString(value: string) {
-    // const regex = ORegex.create()
+    const regex = ORegex.create();
     // TODO Add all symbols in documentation to inform users about how to block them and maybe method
   }
 
@@ -113,6 +113,48 @@ export class ORegex {
    */
   public containsInIt(value: string) {
     return this.append(value);
+  }
+
+  /**
+   * Replaces the first appearance of the regex in the string.
+   *
+   * Same as calling value.replace(...)
+   *
+   * @param value The string we replace the first appearance of in the regex
+   * @param replaceValue The new value to put instead of the regex
+   * @param isCaseSensitive Defaults to true, if changed to false regex will ignore the cases for letter meaning a == A
+   * @returns The new string
+   */
+  public replaceFirst(
+    value: string,
+    replaceValue: string,
+    isCaseSensitive = true
+  ) {
+    return value.replace(
+      new RegExp(this.regex, isCaseSensitive ? "" : "i"),
+      replaceValue
+    );
+  }
+
+  /**
+   * Replaces the all appearances of the regex in the string.
+   *
+   * Same as calling value.replaceAll(...)
+   *
+   * @param value The string we replace any appearance of the regex in
+   * @param replaceValue The new value to put instead of the regex
+   * @param isCaseSensitive Defaults to true, if changed to false regex will ignore the cases for letter meaning a == A
+   * @returns The new string
+   */
+  public replaceAll(
+    value: string,
+    replaceValue: string,
+    isCaseSensitive = true
+  ) {
+    return value.replaceAll(
+      new RegExp(this.regex, isCaseSensitive ? "g" : "gi"),
+      replaceValue
+    );
   }
 
   //#region Start/End

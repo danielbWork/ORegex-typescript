@@ -62,6 +62,28 @@ Deno.test(function countOfMatchesIn() {
   assertEquals(regexLines.countOfMatchesIn("bob\nbob", false), 1);
 });
 
+Deno.test(function replaceFirst() {
+  const regex = ORegex.create().append("b");
+
+  assertEquals(regex.replaceFirst("bbb", "t"), "tbb");
+
+  assertEquals(regex.replaceFirst("mmm", "t"), "mmm");
+
+  assertEquals(regex.replaceFirst("Bob", "b", false), "bob");
+});
+
+Deno.test(function replaceAll() {
+  const regex = ORegex.create("t");
+
+  assertEquals(regex.replaceAll("bbb", "t"), "bbb");
+
+  assertEquals(regex.replaceAll("btobtt", ""), "bob");
+
+  assertEquals(regex.replaceAll("bTobTT", ""), "bTobTT");
+
+  assertEquals(regex.replaceAll("bTobTT", "", false), "bob");
+});
+
 Deno.test(function startsWith() {
   const regex = ORegex.create().startsWith("bob");
 
