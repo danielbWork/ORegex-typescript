@@ -474,4 +474,60 @@ export class ORegex {
   }
 
   //#endregion
+
+  //#region Boundaries
+
+  /**
+   * Adds a check if the following value is a word, meaning it's between
+   * two non word characters (word characters are: a-z A-Z 0-9 and _)
+   *
+   * i.e. hasWord("ab") => can match for "ab" "test ab hi" and alike.
+   *
+   * Same as adding \bvalue\b to the regex
+   *
+   */
+  public hasWord(value: string) {
+    return this.append(`\\b${value}\\b`);
+  }
+
+  /**
+   * Adds a check if the following value is a word prefix, meaning it's between
+   * a non word character and a word character (a-z A-Z 0-9 and _) respectively.
+   *
+   * i.e. hasPrefix("ab") => can match for "abc" "test abd hi" and alike.
+   *
+   * Same as adding \bvalue\B to the regex
+   *
+   */
+  public hasPrefix(value: string) {
+    return this.append(`\\b${value}\\B`);
+  }
+
+  /**
+   * Adds a check if the following value is a word suffix, meaning it's between
+   * a word character (a-z A-Z 0-9 and _) and a non word character respectively.
+   *
+   * i.e. hasSuffix("ab") => can match for "cab" "test dab hi" and alike.
+   *
+   * Same as adding \Bvalue\b to the regex
+   *
+   */
+  public hasSuffix(value: string) {
+    return this.append(`\\B${value}\\b`);
+  }
+
+  /**
+   * Adds a check if the following value is inside a word meaning it's between two
+   * word characters (a-z A-Z 0-9 and _).
+   *
+   * i.e. hasSuffix("ab") => can match for "cab" "test dab hi" and alike.
+   *
+   * Same as adding \Bvalue\B to the regex
+   *
+   */
+  public hasInsideWord(value: string) {
+    return this.append(`\\B${value}\\B`);
+  }
+
+  //#endregion
 }

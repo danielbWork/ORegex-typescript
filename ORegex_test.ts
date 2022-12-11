@@ -337,3 +337,51 @@ Deno.test(function any() {
   assertFalse(regex.isIn(""));
   assertEquals(regex.build(), ".");
 });
+
+Deno.test(function hasWord() {
+  const regex = ORegex.create().hasWord("bob");
+
+  assert(regex.isIn("bob"));
+  assert(regex.isIn("test bob name"));
+  assertFalse(regex.isIn("bober"));
+  assertFalse(regex.isIn("Debob"));
+  assertFalse(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "\\bbob\\b");
+});
+
+Deno.test(function hasPrefix() {
+  const regex = ORegex.create().hasPrefix("bob");
+
+  assertFalse(regex.isIn("bob"));
+  assertFalse(regex.isIn("test bob name"));
+  assert(regex.isIn("bober"));
+  assertFalse(regex.isIn("Debob"));
+  assertFalse(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "\\bbob\\B");
+});
+
+Deno.test(function hasSuffix() {
+  const regex = ORegex.create().hasSuffix("bob");
+
+  assertFalse(regex.isIn("bob"));
+  assertFalse(regex.isIn("test bob name"));
+  assertFalse(regex.isIn("bober"));
+  assert(regex.isIn("Debob"));
+  assertFalse(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "\\Bbob\\b");
+});
+
+Deno.test(function hasInsideWord() {
+  const regex = ORegex.create().hasInsideWord("bob");
+
+  assertFalse(regex.isIn("bob"));
+  assertFalse(regex.isIn("test bob name"));
+  assertFalse(regex.isIn("bober"));
+  assertFalse(regex.isIn("Debob"));
+  assert(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "\\Bbob\\B");
+});
