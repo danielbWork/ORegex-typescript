@@ -19,17 +19,6 @@ export class ORegex {
   }
 
   /**
-   * Goes over the string and
-   * @param value The string that might contain special characters
-   *
-   * @returns A version of the string where all special characters have been updated to be treated as normal
-   */
-  public static parseToNonRegexString(value: string) {
-    const regex = ORegex.create();
-    // TODO Add all symbols in documentation to inform users about how to block them and maybe method
-  }
-
-  /**
    * Returns the regex built
    * @returns The regex string created by the user
    */
@@ -527,6 +516,76 @@ export class ORegex {
    */
   public hasInsideWord(value: string) {
     return this.append(`\\B${value}\\B`);
+  }
+
+  //#endregion
+
+  //#region Util Methods
+
+  /**
+   * Adds to the regex a check for if the following character is a english letter.
+   *
+   * Same as adding [a-zA-Z] to the regex.
+   */
+  public isLetter() {
+    return this.append("[a-zA-Z]");
+  }
+
+  /**
+   * Adds to the regex a check for if the following character is a english lowercase letter.
+   *
+   * Same as adding [a-z] to the regex.
+   */
+  public isLowercaseLetter() {
+    return this.append("[a-z]");
+  }
+
+  /**
+   * Adds to the regex a check for if the following character is a english uppercase letter.
+   *
+   * Same as adding [A-Z] to the regex.
+   */
+  public isUppercaseLetter() {
+    return this.append("[A-Z]");
+  }
+
+  /**
+   * Adds to the regex a check for if the following value is a integer.
+   *
+   * Same as adding ^(-?\d+)$ to the regex.
+   */
+  public isInteger() {
+    return this.append("^(-?\\d+)$");
+  }
+
+  /**
+   * Adds to the regex a check for if the following value is a decimal.
+   *
+   * This matches 12.8, -0.5 and alike but not integers such as 6, 58 etc...
+   *
+   * Same as adding ^(-?\d*)[.,](\d+)$  to the regex.
+   */
+  public isDecimal() {
+    return this.append("^(-?\\d*)[.,](\\d+)$");
+  }
+
+  /**
+   * Adds to the regex a check for if the following value is a fraction.
+   *
+   * This only matches fraction with integers (-1/2, 2/3 ...) and not with decimals (12.5/6)
+   *
+   * Same as adding ^(-?\d+)[\/](-?\d+)$ to the regex.
+   */
+  public isFraction() {
+    return this.append("^(-?\\d+)[/](-?\\d+)$");
+  }
+  /**
+   * Adds to the regex a check for if the following value is a hexColor.
+   *
+   * Same as adding \B#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b to the regex.
+   */
+  public isHexColor() {
+    return this.append("\\B#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\\b");
   }
 
   //#endregion

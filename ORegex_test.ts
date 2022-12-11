@@ -385,3 +385,102 @@ Deno.test(function hasInsideWord() {
   assertFalse(regex.isIn(""));
   assertEquals(regex.build(), "\\Bbob\\B");
 });
+
+Deno.test(function isLetter() {
+  const regex = ORegex.create().isLetter();
+
+  assert(regex.isIn("b"));
+  assert(regex.isIn("O"));
+  assert(regex.isIn("B"));
+  assertFalse(regex.isIn("51125-&*%^$$%*("));
+  assert(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "[a-zA-Z]");
+});
+
+Deno.test(function isLetter() {
+  const regex = ORegex.create().isLetter();
+
+  assert(regex.isIn("b"));
+  assert(regex.isIn("O"));
+  assert(regex.isIn("B"));
+  assertFalse(regex.isIn("51125-&*%^$$%*("));
+  assert(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "[a-zA-Z]");
+});
+
+Deno.test(function isLowercaseLetter() {
+  const regex = ORegex.create().isLowercaseLetter();
+
+  assert(regex.isIn("b"));
+  assert(regex.isIn("o"));
+  assertFalse(regex.isIn("B"));
+  assertFalse(regex.isIn("51125-&*%^$$%*("));
+  assert(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "[a-z]");
+});
+
+Deno.test(function isUppercaseLetter() {
+  const regex = ORegex.create().isUppercaseLetter();
+
+  assertFalse(regex.isIn("b"));
+  assertFalse(regex.isIn("o"));
+  assert(regex.isIn("B"));
+  assertFalse(regex.isIn("51125-&*%^$$%*("));
+  assert(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "[A-Z]");
+});
+
+Deno.test(function isInteger() {
+  const regex = ORegex.create().isInteger();
+
+  assert(regex.isIn("0"));
+  assert(regex.isIn("-123"));
+  assertFalse(regex.isIn("B"));
+  assertFalse(regex.isIn("511.5"));
+  assertFalse(regex.isIn("1/5"));
+  assertFalse(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "^(-?\\d+)$");
+});
+
+Deno.test(function isDecimal() {
+  const regex = ORegex.create().isDecimal();
+
+  assertFalse(regex.isIn("0"));
+  assertFalse(regex.isIn("-123"));
+  assertFalse(regex.isIn("B"));
+  assert(regex.isIn("511.5"));
+  assert(regex.isIn("-67.5"));
+  assertFalse(regex.isIn("1/5"));
+  assertFalse(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "^(-?\\d*)[.,](\\d+)$");
+});
+
+Deno.test(function isFraction() {
+  const regex = ORegex.create().isFraction();
+
+  assert(regex.isIn("1/5"));
+  assert(regex.isIn("-2/3"));
+  assert(regex.isIn("-1090/-3"));
+  assertFalse(regex.isIn("0"));
+  assertFalse(regex.isIn("B"));
+  assertFalse(regex.isIn("511.5"));
+  assertFalse(regex.isIn("Debober"));
+  assertFalse(regex.isIn(""));
+  assertEquals(regex.build(), "^(-?\\d+)[/](-?\\d+)$");
+});
+
+Deno.test(function isHexColor() {
+  const regex = ORegex.create().isHexColor();
+  assertFalse(regex.isIn("0"));
+  assertFalse(regex.isIn("B"));
+  assert(regex.isIn("#fff"));
+  assert(regex.isIn("#42ED42"));
+  assert(regex.isIn("#A2eD4f"));
+  assertEquals(regex.build(), "\\B#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\\b");
+});
