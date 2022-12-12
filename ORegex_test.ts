@@ -82,6 +82,11 @@ Deno.test(function replaceAll() {
   assertEquals(regex.replaceAll("bTobTT", ""), "bTobTT");
 
   assertEquals(regex.replaceAll("bTobTT", "", false), "bob");
+
+  const regexMultiline = ORegex.create().startsWith("t");
+
+  assertEquals(regexMultiline.replaceAll("t\nbot\nt", "h"), "h\nbot\nh");
+  assertEquals(regexMultiline.replaceAll("tasd", "h"), "hasd");
 });
 
 Deno.test(function startsWith() {

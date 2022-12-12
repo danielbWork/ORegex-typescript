@@ -141,7 +141,7 @@ export class ORegex {
     isCaseSensitive = true
   ) {
     return value.replaceAll(
-      new RegExp(this.regex, isCaseSensitive ? "g" : "gi"),
+      new RegExp(this.regex, isCaseSensitive ? "gm" : "gmi"),
       replaceValue
     );
   }
